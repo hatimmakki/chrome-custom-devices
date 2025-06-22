@@ -315,7 +315,7 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
             # Generate devices JSON
             devices_json = [self._create_device_json(device) for device in DEVICES]
             
-            # Update preferences
+            # Update preferences with correct key name (Chrome changed this!)
             preferences["devtools"]["preferences"]["custom-emulated-device-list"] = devices_json
             
             # Write back to file

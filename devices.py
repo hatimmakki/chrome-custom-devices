@@ -3,163 +3,164 @@ Device definitions for Chrome DevTools custom devices.
 Each device includes specifications for width, height, DPR, and device type.
 """
 
-# Device specifications from user requirements
+# Device specifications with proper viewport dimensions (not screen resolution)
+# Based on actual browser viewport sizes accounting for browser UI
 DEVICES = [
     {
-        "name": "Apple MacBook 12-inch",
-        "width": 2304,
-        "height": 1310,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "Apple MacBook Pro 13-inch",
-        "width": 2560,
-        "height": 1470,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "Apple MacBook Pro 15-inch",
-        "width": 2880,
-        "height": 1670,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "iMac 24 - 2021",
-        "width": 2048,
-        "height": 1152,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook PRO 16 - 2021",
-        "width": 1728,
-        "height": 1117,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Air 13 - 2020",
+        "name": "MacBook Air 13\" (2020)",
         "width": 1280,
-        "height": 800,
+        "height": 715,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 16 - 2019",
+        "name": "MacBook Air 15\" (2023)",
+        "width": 1440,
+        "height": 820,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook Pro 14\" (2021)",
+        "width": 1512,
+        "height": 865,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook Pro 16\" (2021)",
+        "width": 1728,
+        "height": 1000,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook Pro 16\" (2019)",
         "width": 1536,
         "height": 960,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 13 - 2018",
-        "width": 1280,
-        "height": 800,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Air 13 - 2018",
-        "width": 1280,
-        "height": 800,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Pro 15 - 2018",
+        "name": "MacBook Pro 15\" (2018)",
         "width": 1440,
         "height": 900,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 13 Pro - 2017",
-        "width": 1440,
-        "height": 900,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Pro 15 Pro - 2017",
+        "name": "MacBook Pro 13\" (2020)",
         "width": 1280,
         "height": 800,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 13 Pro - 2016",
+        "name": "iMac 24\" (2021)",
+        "width": 2240,
+        "height": 1156,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "iMac 27\" (2020)",
+        "width": 2560,
+        "height": 1336,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "Studio Display",
+        "width": 2560,
+        "height": 1336,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "Studio Display (Half)",
+        "width": 1278,
+        "height": 1336,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "Pro Display XDR",
+        "width": 3008,
+        "height": 1588,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook 12\" (2017)",
+        "width": 1152,
+        "height": 720,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook Pro 15\" (2016)",
+        "width": 1440,
+        "height": 900,
+        "dpr": 2,
+        "type": "desktop"
+    },
+    {
+        "name": "MacBook Pro 13\" (2016)",
         "width": 1280,
         "height": 800,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 15 Pro - 2016",
-        "width": 1440,
-        "height": 900,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Pro 13 Pro - 2015",
+        "name": "MacBook Air 13\" (2018)",
         "width": 1280,
         "height": 800,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "MacBook Pro 15 Pro - 2015",
-        "width": 1440,
-        "height": 900,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "MacBook Pro 15 Pro - 2014",
-        "width": 1440,
-        "height": 900,
-        "dpr": 2,
-        "type": "desktop"
-    },
-    {
-        "name": "Notebook with touch",
-        "width": 1280,
-        "height": 950,
+        "name": "Generic Laptop (1080p)",
+        "width": 1366,
+        "height": 768,
         "dpr": 1,
+        "type": "desktop"
+    },
+    {
+        "name": "Generic Laptop (1440p)",
+        "width": 1600,
+        "height": 900,
+        "dpr": 1,
+        "type": "desktop"
+    },
+    {
+        "name": "Touchscreen Laptop",
+        "width": 1280,
+        "height": 720,
+        "dpr": 1.5,
         "type": "desktop",
         "touch": True
     },
     {
-        "name": "Notebook with HiDPI screen",
+        "name": "HiDPI Laptop",
         "width": 1440,
         "height": 900,
         "dpr": 2,
         "type": "desktop"
     },
     {
-        "name": "Dell Latitude 3420 14",
-        "width": 1440,
-        "height": 809,
-        "dpr": 1,
+        "name": "Dell XPS 13",
+        "width": 1920,
+        "height": 1080,
+        "dpr": 1.5,
         "type": "desktop"
     },
     {
-        "name": "Microsoft Surface Duo",
-        "width": 1114,
-        "height": 705,
-        "dpr": 2.5,
-        "type": "mobile",
+        "name": "Surface Laptop",
+        "width": 1504,
+        "height": 1000,
+        "dpr": 1.5,
+        "type": "desktop",
         "touch": True
-    },
-    {
-        "name": "Generic notebook",
-        "width": 1280,
-        "height": 800,
-        "dpr": 1,
-        "type": "desktop"
     }
 ]
 

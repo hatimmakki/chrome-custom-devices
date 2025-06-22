@@ -799,7 +799,7 @@ def modify_preferences(preferences_path, devices_json_str):
         if "preferences" not in preferences["devtools"]:
             preferences["devtools"]["preferences"] = {}
         
-        # Update with custom devices
+        # Update with custom devices (note: hyphenated key name!)
         preferences["devtools"]["preferences"]["custom-emulated-device-list"] = devices
         
         # Write back to file

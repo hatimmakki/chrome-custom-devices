@@ -10,7 +10,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="chrome-custom-devices",
-    version="1.0.9",
+    version="1.0.10",
     author="Hatim Makki",
     author_email="hatim.makki@gmail.com",
     description="A comprehensive tool to add custom device presets to Chrome DevTools",
