@@ -23,6 +23,11 @@ from typing import List, Dict, Optional, Tuple
 from devices import DEVICES, get_device_capabilities, get_user_agent, is_mobile_device
 
 
+import sys
+if sys.platform == "win32":
+    import os
+    os.environ["PYTHONIOENCODING"] = "utf-8"
+
 class ChromeDevicesManager:
     """Main class for managing Chrome custom devices."""
     
