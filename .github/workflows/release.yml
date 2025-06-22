@@ -67,6 +67,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install build twine
     
+    - name: Clean build artifacts
+      run: |
+        rm -rf dist/ build/ *.egg-info/
+        find . -name "*.pyc" -delete
+        find . -name "__pycache__" -delete
+        echo "Build artifacts cleaned"
+    
     - name: Build package
       run: python -m build
     
