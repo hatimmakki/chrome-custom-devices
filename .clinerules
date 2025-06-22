@@ -1,0 +1,79 @@
+# Cleanup Rules for Chrome Custom Devices Project
+# This file defines cleanup and validation rules to prevent common deployment errors
+
+# Clean build artifacts before release
+clean_build_artifacts() {
+    echo "🧹 Cleaning build artifacts..."
+    rm -rf chrome_custom_devices.egg-info/
+    rm -rf build/
+    rm -rf dist/
+    rm -rf __pycache__/
+    find . -name "*.pyc" -delete
+    find . -name "*.pyo" -delete
+    echo "✅ Build artifacts cleaned"
+}
+
+# Validate version consistency between setup.py and package.json
+validate_versions() {
+    echo "🔍 Validating version consistency..."
+    
+    SETUP_VERSION=$(python -c "import setup; print(setup.setup().metadata.version)" 2>/dev/null || grep "version=" setup.py | head -1 | sed 's/.*version="\([^"]*\)".*/\1/')
+    PACKAGE_VERSION=$(grep '"version"' package.json | sed 's/.*"version": "\([^"]*\)".*/\1/')
+    
+    echo "setup.py version: $SETUP_VERSION"
+    echo "package.json version: $PACKAGE_VERSION"
+    
+    if [ "$SETUP_VERSION" != "$PACKAGE_VERSION" ]; then
+        echo "❌ Version mismatch detected!"
+        echo "   setup.py: $SETUP_VERSION"
+        echo "   package.json: $PACKAGE_VERSION"
+        echo "   Please update both files to the same version"
+        exit 1
+    fi
+    
+    echo "✅ Versions are consistent: $SETUP_VERSION"
+}
+
+# Validate PyPI classifiers
+validate_classifiers() {
+    echo "🔍 Validating PyPI classifiers..."
+    
+    # Check for known invalid classifiers
+    if grep -q "Topic :: Software Development :: Tools" setup.py; then
+        echo "❌ Invalid classifier found: 'Topic :: Software Development :: Tools'"
+        echo "   Replace with: 'Topic :: Software Development' or 'Topic :: Utilities'"
+        exit 1
+    fi
+    
+    echo "✅ PyPI classifiers look valid"
+}
+
+# Pre-release validation
+pre_release_check() {
+    echo "🚀 Running pre-release checks..."
+    clean_build_artifacts
+    validate_versions
+    validate_classifiers
+    echo "✅ All pre-release checks passed!"
+}
+
+# Usage instructions
+usage() {
+    echo "Chrome Custom Devices - Cleanup Rules"
+    echo ""
+    echo "Usage:"
+    echo "  source .clinerules"
+    echo "  pre_release_check        # Run all checks before release"
+    echo "  clean_build_artifacts    # Clean build files"
+    echo "  validate_versions        # Check version consistency"
+    echo "  validate_classifiers     # Check PyPI classifiers"
+    echo ""
+    echo "Pre-release workflow:"
+    echo "  1. Update version in both setup.py and package.json"
+    echo "  2. Run: pre_release_check"
+    echo "  3. Commit and push changes"
+    echo "  4. Create release tag"
+}
+
+echo "📋 Chrome Custom Devices cleanup rules loaded"
+echo "💡 Run 'usage' to see available commands"
