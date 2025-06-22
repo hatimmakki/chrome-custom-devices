@@ -52,6 +52,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
+    environment: prod
     
     steps:
     - uses: actions/checkout@v4
@@ -79,6 +80,7 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
+    environment: prod
     
     steps:
     - uses: actions/checkout@v4
