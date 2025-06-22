@@ -18,10 +18,10 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/hatimmakki/chrome-custom-devices",
     py_modules=["chrome_devices_manager", "devices"],
+    license="MIT",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
