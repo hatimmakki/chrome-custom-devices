@@ -1,0 +1,149 @@
+name: Release and Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+    
+    - name: Test CLI installation
+      run: |
+        chrome-devices --help
+        chrome-devices --list-profiles
+    
+    - name: Test quick-install script (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        chmod +x quick-install.sh
+        # Test script syntax without running installation
+        bash -n quick-install.sh
+
+  deploy-pypi:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+    
+    - name: Build package
+      run: python -m build
+    
+    - name: Publish to PyPI
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: twine upload dist/*
+
+  deploy-npm:
+    needs: test
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        registry-url: 'https://registry.npmjs.org'
+    
+    - name: Make scripts executable
+      run: |
+        chmod +x bin/chrome-devices
+        chmod +x scripts/install.js
+    
+    - name: Publish to npm
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      run: npm publish
+
+  create-release:
+    needs: [deploy-pypi, deploy-npm]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref_name }}
+        release_name: Chrome Custom Devices ${{ github.ref_name }}
+        body: |
+          ## Chrome Custom Devices ${{ github.ref_name }}
+          
+          Add 22+ desktop device presets to Chrome DevTools with one command!
+          
+          ### 🚀 Installation Methods
+          
+          **One-command (easiest):**
+          ```bash
+          curl -sSL https://raw.githubusercontent.com/hatimmakki/chrome-custom-devices/main/quick-install.sh | bash
+          ```
+          
+          **Python (pip):**
+          ```bash
+          pip install chrome-custom-devices
+          chrome-devices --install-all
+          ```
+          
+          **Node.js (npm):**
+          ```bash
+          npm install -g chrome-custom-devices
+          chrome-devices
+          ```
+          
+          **Homebrew (macOS):**
+          ```bash
+          brew install hatimmakki/tap/chrome-custom-devices
+          chrome-devices --install-all
+          ```
+          
+          ### 📱 Included Devices
+          - MacBook models (12", 13", 15", 16") from 2014-2021
+          - iMac 24" - 2021
+          - MacBook Air models
+          - Notebooks with touch and HiDPI screens
+          - Dell Latitude, Microsoft Surface Duo
+          - Generic notebook
+          
+          Perfect for testing responsive designs on actual desktop resolutions!
+        draft: false
+        prerelease: false

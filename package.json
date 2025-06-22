@@ -1,0 +1,52 @@
+{
+  "name": "chrome-custom-devices",
+  "version": "1.0.0",
+  "description": "Add 22+ desktop device presets to Chrome DevTools with one command. Perfect for testing responsive designs on MacBooks, iMacs, and other desktop resolutions.",
+  "main": "index.js",
+  "bin": {
+    "chrome-devices": "./bin/chrome-devices"
+  },
+  "scripts": {
+    "install": "node scripts/install.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chrome",
+    "devtools",
+    "devices",
+    "emulation",
+    "responsive",
+    "web-development",
+    "macbook",
+    "imac",
+    "desktop",
+    "testing"
+  ],
+  "author": {
+    "name": "Hatim Makki",
+    "email": "hatim.makki@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hatimmakki/chrome-custom-devices.git"
+  },
+  "bugs": {
+    "url": "https://github.com/hatimmakki/chrome-custom-devices/issues"
+  },
+  "homepage": "https://github.com/hatimmakki/chrome-custom-devices#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "files": [
+    "bin/",
+    "scripts/",
+    "README.md",
+    "LICENSE"
+  ]
+}
