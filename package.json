@@ -1,6 +1,6 @@
 {
   "name": "chrome-custom-devices",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Add 22+ desktop device presets to Chrome DevTools with one command. Perfect for testing responsive designs on MacBooks, iMacs, and other desktop resolutions.",
   "main": "index.js",
   "bin": {
