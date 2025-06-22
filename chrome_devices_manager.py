@@ -22,11 +22,17 @@ from typing import List, Dict, Optional, Tuple
 
 from devices import DEVICES, get_device_capabilities, get_user_agent, is_mobile_device
 
-
 import sys
 if sys.platform == "win32":
     import os
+    import codecs
     os.environ["PYTHONIOENCODING"] = "utf-8"
+    # Force UTF-8 encoding for stdout on Windows
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    else:
+        # For older Python versions
+        sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'strict')
 
 class ChromeDevicesManager:
     """Main class for managing Chrome custom devices."""
@@ -164,8 +170,8 @@ class ChromeDevicesManager:
             with open(filename, 'w', encoding='utf-8') as f:
                 json.dump(devices_json, f, indent=2, ensure_ascii=False)
             
-            print(f"✅ Generated {filename} for Vibranium CLI")
-            print(f"📦 Install with: npx @pittankopta/vibranium add {filename}")
+            print(f"[SUCCESS] Generated {filename} for Vibranium CLI")
+            print(f"[INSTALL] Install with: npx @pittankopta/vibranium add {filename}")
             
         elif output_format == "preferences":
             # Format for direct Preferences file insertion
@@ -175,7 +181,7 @@ class ChromeDevicesManager:
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(devices_string)
             
-            print(f"✅ Generated {filename} for direct Preferences modification")
+            print(f"[SUCCESS] Generated {filename} for direct Preferences modification")
             
         elif output_format == "manual":
             filename = "devices_manual.json"
@@ -187,8 +193,8 @@ class ChromeDevicesManager:
             with open("MANUAL_INSTALLATION.md", 'w', encoding='utf-8') as f:
                 f.write(instructions)
             
-            print(f"✅ Generated {filename} and MANUAL_INSTALLATION.md")
-            print("📖 Follow the instructions in MANUAL_INSTALLATION.md")
+            print(f"[SUCCESS] Generated {filename} and MANUAL_INSTALLATION.md")
+            print("[INFO] Follow the instructions in MANUAL_INSTALLATION.md")
         
         return filename
     
@@ -253,13 +259,13 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
         backup_filename = f"backup_{timestamp}.json"
         
         shutil.copy2(profile_path, backup_filename)
-        print(f"✅ Backup created: {backup_filename}")
+        print(f"[SUCCESS] Backup created: {backup_filename}")
         return backup_filename
     
     def install_devices(self, profile_path: Optional[str] = None) -> bool:
         """Install devices directly to Chrome Preferences."""
         if self._is_chrome_running():
-            print("⚠️  Warning: Chrome is currently running!")
+            print("[WARNING] Chrome is currently running!")
             print("   Please close Chrome completely before installation.")
             response = input("Continue anyway? (y/N): ").lower()
             if response != 'y':
@@ -269,14 +275,14 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
         if not profile_path:
             profiles = self._find_chrome_profiles()
             if not profiles:
-                print("❌ No Chrome profiles found!")
+                print("[ERROR] No Chrome profiles found!")
                 return False
             
             if len(profiles) == 1:
                 profile_name, profile_path = profiles[0]
-                print(f"📁 Using profile: {profile_name}")
+                print(f"[PROFILE] Using profile: {profile_name}")
             else:
-                print("📁 Multiple Chrome profiles found:")
+                print("[PROFILE] Multiple Chrome profiles found:")
                 for i, (name, path) in enumerate(profiles):
                     print(f"   {i + 1}. {name}")
                 
@@ -284,12 +290,12 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
                     choice = int(input("Select profile (1-{}): ".format(len(profiles)))) - 1
                     if 0 <= choice < len(profiles):
                         profile_name, profile_path = profiles[choice]
-                        print(f"📁 Using profile: {profile_name}")
+                        print(f"[PROFILE] Using profile: {profile_name}")
                     else:
-                        print("❌ Invalid selection!")
+                        print("[ERROR] Invalid selection!")
                         return False
                 except (ValueError, KeyboardInterrupt):
-                    print("❌ Installation cancelled!")
+                    print("[ERROR] Installation cancelled!")
                     return False
         
         # Create backup
@@ -316,20 +322,20 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
             with open(profile_path, 'w', encoding='utf-8') as f:
                 json.dump(preferences, f, separators=(',', ':'), ensure_ascii=False)
             
-            print(f"✅ Successfully installed {len(DEVICES)} custom devices!")
-            print("🔄 Please restart Chrome to see the new devices in DevTools.")
+            print(f"[SUCCESS] Successfully installed {len(DEVICES)} custom devices!")
+            print("[INFO] Please restart Chrome to see the new devices in DevTools.")
             return True
             
         except Exception as e:
-            print(f"❌ Installation failed: {e}")
-            print(f"🔄 Restoring from backup: {backup_file}")
+            print(f"[ERROR] Installation failed: {e}")
+            print(f"[INFO] Restoring from backup: {backup_file}")
             shutil.copy2(backup_file, profile_path)
             return False
     
     def install_devices_all_profiles(self) -> bool:
         """Install devices to ALL Chrome profiles automatically."""
         if self._is_chrome_running():
-            print("⚠️  Warning: Chrome is currently running!")
+            print("[WARNING] Chrome is currently running!")
             print("   For best results, please close Chrome and run this script again.")
             response = input("Continue anyway? (y/N): ").lower()
             if response != 'y':
@@ -339,11 +345,11 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
         # Find all profiles
         profiles = self._find_chrome_profiles()
         if not profiles:
-            print("❌ No Chrome profiles found!")
+            print("[ERROR] No Chrome profiles found!")
             print("   Please make sure Chrome is installed and has been run at least once.")
             return False
         
-        print(f"🔍 Found {len(profiles)} Chrome profile(s):")
+        print(f"[SCAN] Found {len(profiles)} Chrome profile(s):")
         for profile_name, profile_path in profiles:
             chrome_variant = "Chrome"
             if "Chrome Beta" in profile_path:
@@ -358,9 +364,9 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
                 chrome_variant = "Chromium"
             
             profile_short_name = "Default" if "Default" in profile_path else profile_name.split("(")[-1].rstrip(")")
-            print(f"   • {chrome_variant} {profile_short_name}")
+            print(f"   * {chrome_variant} {profile_short_name}")
         
-        print(f"\n📦 Installing custom devices to all profiles...")
+        print(f"\n[INSTALL] Installing custom devices to all profiles...")
         
         # Generate devices JSON once
         devices_json = [self._create_device_json(device) for device in DEVICES]
@@ -406,7 +412,7 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
                     chrome_variant = "Chromium"
                 
                 profile_short_name = "Default" if "Default" in profile_path else profile_name.split("(")[-1].rstrip(")")
-                print(f"✅ {chrome_variant} {profile_short_name}")
+                print(f"[OK] {chrome_variant} {profile_short_name}")
                 success_count += 1
                 
             except Exception as e:
@@ -415,42 +421,42 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
                     shutil.copy2(backup_file, profile_path)
                 except:
                     pass
-                print(f"❌ {profile_name} (restored from backup)")
+                print(f"[FAIL] {profile_name} (restored from backup)")
         
         print()
         if success_count == total_count:
-            print(f"🎉 Successfully installed custom devices to all {total_count} Chrome profiles!")
+            print(f"[SUCCESS] Successfully installed custom devices to all {total_count} Chrome profiles!")
         elif success_count > 0:
-            print(f"⚠️  Installed to {success_count} out of {total_count} profiles")
+            print(f"[PARTIAL] Installed to {success_count} out of {total_count} profiles")
         else:
-            print("❌ Failed to install to any profiles")
+            print("[ERROR] Failed to install to any profiles")
             return False
         
         print()
-        print("🔄 Restart Chrome to see your new devices in DevTools > Settings > Devices")
-        print(f"\n📱 Installed {len(DEVICES)} custom devices:")
+        print("[INFO] Restart Chrome to see your new devices in DevTools > Settings > Devices")
+        print(f"\n[DEVICES] Installed {len(DEVICES)} custom devices:")
         for device in DEVICES:
-            print(f"   • {device['name']}")
+            print(f"   * {device['name']}")
         
         return success_count > 0
     
     def restore_from_backup(self, backup_file: str, profile_path: Optional[str] = None) -> bool:
         """Restore Chrome Preferences from backup."""
         if not os.path.exists(backup_file):
-            print(f"❌ Backup file not found: {backup_file}")
+            print(f"[ERROR] Backup file not found: {backup_file}")
             return False
         
         if not profile_path:
             profiles = self._find_chrome_profiles()
             if not profiles:
-                print("❌ No Chrome profiles found!")
+                print("[ERROR] No Chrome profiles found!")
                 return False
             
             if len(profiles) == 1:
                 profile_name, profile_path = profiles[0]
-                print(f"📁 Restoring to profile: {profile_name}")
+                print(f"[RESTORE] Restoring to profile: {profile_name}")
             else:
-                print("📁 Multiple Chrome profiles found:")
+                print("[PROFILE] Multiple Chrome profiles found:")
                 for i, (name, path) in enumerate(profiles):
                     print(f"   {i + 1}. {name}")
                 
@@ -458,35 +464,34 @@ Open Chrome and check DevTools > Settings > Devices to see your new devices.
                     choice = int(input("Select profile to restore (1-{}): ".format(len(profiles)))) - 1
                     if 0 <= choice < len(profiles):
                         profile_name, profile_path = profiles[choice]
-                        print(f"📁 Restoring to profile: {profile_name}")
+                        print(f"[RESTORE] Restoring to profile: {profile_name}")
                     else:
-                        print("❌ Invalid selection!")
+                        print("[ERROR] Invalid selection!")
                         return False
                 except (ValueError, KeyboardInterrupt):
-                    print("❌ Restore cancelled!")
+                    print("[ERROR] Restore cancelled!")
                     return False
         
         try:
             shutil.copy2(backup_file, profile_path)
-            print(f"✅ Successfully restored from {backup_file}")
-            print("🔄 Please restart Chrome for changes to take effect.")
+            print(f"[SUCCESS] Successfully restored from {backup_file}")
+            print("[INFO] Please restart Chrome for changes to take effect.")
             return True
         except Exception as e:
-            print(f"❌ Restore failed: {e}")
+            print(f"[ERROR] Restore failed: {e}")
             return False
     
     def list_profiles(self):
         """List all found Chrome profiles."""
         profiles = self._find_chrome_profiles()
         if not profiles:
-            print("❌ No Chrome profiles found!")
+            print("[ERROR] No Chrome profiles found!")
             return
         
-        print("📁 Found Chrome profiles:")
+        print("[PROFILES] Found Chrome profiles:")
         for i, (name, path) in enumerate(profiles):
             print(f"   {i + 1}. {name}")
             print(f"      Path: {path}")
-
 
 def main():
     """Main entry point."""
@@ -562,18 +567,17 @@ Examples:
                 if os.path.exists(args.profile):
                     manager.backup_preferences(args.profile)
                 else:
-                    print(f"❌ Profile not found: {args.profile}")
+                    print(f"[ERROR] Profile not found: {args.profile}")
             else:
                 profile_name, profile_path = profiles[0]
-                print(f"📁 Backing up profile: {profile_name}")
+                print(f"[BACKUP] Backing up profile: {profile_name}")
                 manager.backup_preferences(profile_path)
         else:
-            print("❌ No Chrome profiles found!")
+            print("[ERROR] No Chrome profiles found!")
     elif args.restore:
         manager.restore_from_backup(args.restore, args.profile)
     else:
         parser.print_help()
-
 
 if __name__ == "__main__":
     main()
